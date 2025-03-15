@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 
 const createUser = async (req, res) => {
     try {
+      // console.log("Datos recibidos:", req.body);
       const {
         nombre,
         apellidos,
@@ -19,12 +20,12 @@ const createUser = async (req, res) => {
       };
   
       await UsersModel.create(newUser);
-      res.status(200).json({ message: "Usuario creado correctamente" });
+      res.status(200).json({ success: true, message: "Usuario creado correctamente" });
     } catch (error) {
       if (error.code === 11000) {
-        return res.status(500).send({ status: "failed", error: error.message });
+        return res.status(400).json({ success: false, message: "El email ya está registrado" });
       }
-      res.status(500).send({ status: "failed", error: error.message });
+      res.status(500).json({ status: "failed", error: error.message });
     }
   };
 

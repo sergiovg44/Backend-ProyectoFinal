@@ -10,7 +10,7 @@ const { verifyToken } = require("../middlewares/auth");
 const router = express.Router();
 
 //Ruta simple sin autentificacion
-router.post("/user", createUser)
+router.post("/register", createUser)
 
 //Con autentidicacion en un futuro añadir middlewares
 router.get("/user", verifyToken, getUser)
