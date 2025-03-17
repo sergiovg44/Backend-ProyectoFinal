@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const { 
-    getAllSongs 
+    getAllSongs, 
+    getById
 
 } = require("../controllers/songController");
 
@@ -10,6 +11,7 @@ const {
 
 
 router.get("/songs", getAllSongs)
+router.get("/songs/:idSong", getById)
 
 
 module.exports = router;
