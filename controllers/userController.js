@@ -36,7 +36,7 @@ const createUser = async (req, res) => {
       if (!users) {
         return res.status(404).json({ message: "Usuario no encontrado" });
       }
-      res.status(200).json(users);
+      res.status(200).json({ success: true, data: users });
     } catch (error) {
       res.status(500).json({ message: "Error al obtener el usuario", error });
     }
@@ -60,9 +60,86 @@ const createUser = async (req, res) => {
       res.status(500).json({ success: false, error: error.message });
     }
   };
+
+  const addToFavourites = async (req, res) => {
+    try {
+      const  {idSong}  = req.params; // ID de la canción
+      const idUser = req.payload._id; // ID del usuario desde el JWT
+  
+      if (!idUser) {
+        return res.status(400).json({ success: false, message: "Usuario no encontrado" });
+      }
+  
+      const user = await UsersModel.findById(idUser);
+  
+      if (!user) {
+        return res.status(404).json({ success: false, message: "Usuario no existe en la base de datos" });
+      }
+  
+      const isIncluded = user.favoritas.includes(idSong);
+      if (isIncluded) {
+        return res.status(400).json({ success: false, message: "Ya tienes esa canción en favoritos" });
+      }
+  
+      await UsersModel.updateOne(
+        { _id: idUser },
+        { $push: { favoritas: idSong } }
+      );
+      const updatedUser = await UsersModel.findById(idUser)
+      return res.status(200).json({
+        success: true,
+        message: "Canción agregada a favoritos",
+        data: updatedUser,
+      });
+  
+    } catch (error) {
+      console.error("Error al agregar a favorito:", error);
+      return res.status(500).json({ success: false, message: "Error interno", error: error.message });
+    }
+  };
+  const deleteToFavourites = async (req, res) => {
+    try {
+      const { idSong } = req.params;
+      const idUser = req.payload._id;
+  
+      if (!idUser) {
+        return res.status(400).json({ success: false, message: "Usuario no encontrado" });
+      }
+  
+      const user = await UsersModel.findById(idUser);
+      if (!user) {
+        return res.status(404).json({ success: false, message: "Usuario no existe en la base de datos" });
+      }
+  
+      const isIncluded = user.favoritas.includes(idSong);
+      if (!isIncluded) {
+        return res.status(400).json({ success: false, message: "La canción no está en favoritos" });
+      }
+  
+      await UsersModel.updateOne(
+        { _id: idUser },
+        { $pull: { favoritas: idSong } } // ⬅️ QUITA la canción del array
+      );
+  
+      const updatedUser = await UsersModel.findById(idUser);
+      return res.status(200).json({
+        success: true,
+        message: "Canción eliminada de favoritos",
+        data: updatedUser,
+      });
+  
+    } catch (error) {
+      console.error("Error al eliminar favorito:", error);
+      return res.status(500).json({ success: false, message: "Error interno", error: error.message });
+    }
+  };
+
+
   
   module.exports ={
     createUser,
     getUser,
-    deleteUser
+    deleteUser,
+    addToFavourites,
+    deleteToFavourites
   }

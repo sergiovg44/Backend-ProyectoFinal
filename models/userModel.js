@@ -40,6 +40,14 @@ const usersSchema = new Schema(
         type: String,
         minLength: [3, "La contraseña debe contener minimo 3 caracteres"],
         required: [true, "La contraseña es obligatoria"],
+      },
+      favoritas: {
+        type: [ mongoose.Schema.Types.ObjectId ],
+        ref: "Songs",
+      },
+      profileImage: {
+        type: String,
+        default: "https://res.cloudinary.com/dsrrcvkdm/image/upload/v1742219276/k8hkwn8lo6rwk9malpgi.jpg"
       }
     }
   );
