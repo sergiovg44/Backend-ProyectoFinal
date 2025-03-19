@@ -1,5 +1,6 @@
 const UsersModel = require("../models/userModel")
 const bcrypt = require("bcrypt");
+const cloudinary = require("../utils/cloudinary")
 
 
 const createUser = async (req, res) => {
@@ -118,7 +119,7 @@ const createUser = async (req, res) => {
   
       await UsersModel.updateOne(
         { _id: idUser },
-        { $pull: { favoritas: idSong } } // ⬅️ QUITA la canción del array
+        { $pull: { favoritas: idSong } } 
       );
   
       const updatedUser = await UsersModel.findById(idUser);
@@ -134,6 +135,68 @@ const createUser = async (req, res) => {
     }
   };
 
+  const updateUser = async (req, res) => {
+    try {
+      const idUser = req.payload._id; // ID del usuario desde el token (asume middleware JWT)
+      const { nombre, apellidos, password } = req.body;
+  
+      const updateData = { nombre, apellidos };
+  
+      // Solo encripta si se envía una nueva contraseña
+      if (password) {
+        updateData.password = await bcrypt.hash(password, 10);
+      }
+  
+      const updatedUser = await UsersModel.findByIdAndUpdate(idUser, updateData, { new: true });
+  
+      if (!updatedUser) {
+        return res.status(404).json({ success: false, message: "Usuario no encontrado" });
+      }
+  
+      res.status(200).json({ success: true, message: "Usuario actualizado correctamente", data: updatedUser });
+  
+    } catch (error) {
+      console.error("Error al actualizar usuario:", error);
+      res.status(500).json({ success: false, message: error.message });
+    }
+  };
+  
+const updateImageProfile = (req, res) => {
+  try {
+    const idUser = req.payload._id;  // ⬅ ID del usuario sacado del token
+    const fileBuffer = req.file.buffer; // ⬅ Imagen subida por el usuario
+
+    // ⬇ SUBIR A CLOUDINARY USANDO STREAM
+    const streamUpload = cloudinary.uploader.upload_stream(
+      {     transformation: [
+        { quality: "auto", fetch_format: "auto" },
+        { width: 300, height: 300, crop: "fill" }
+      ] }, 
+      async (error, result) => {
+        if (error) {
+          console.error("Error Cloudinary:", error);
+          return res.status(500).json({ success: false, message: "Error al subir imagen" });
+        }
+
+        // ⬇ GUARDAR URL EN EL USUARIO
+        const user = await UsersModel.findByIdAndUpdate(
+          idUser,
+          { profileImage: result.secure_url }, // Guarda la URL pública
+        );
+
+        res.status(200).json({ success: true, message: "Imagen actualizada", data: user });
+      }
+    );
+
+    streamUpload.end(fileBuffer); // ⬅ Enviar la imagen a Cloudinary
+
+  } catch (error) {
+    console.error("Error general:", error);
+    res.status(500).json({ success: false, message: "Error interno", error: error.message });
+  }
+}
+
+
 
   
   module.exports ={
@@ -141,5 +204,7 @@ const createUser = async (req, res) => {
     getUser,
     deleteUser,
     addToFavourites,
-    deleteToFavourites
+    deleteToFavourites,
+    updateUser,
+    updateImageProfile
   }
