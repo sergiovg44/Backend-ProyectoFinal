@@ -7,6 +7,7 @@ const {
     deleteToFavourites,
     updateUser,
     updateImageProfile,
+    contactEmail,
 } = require("../controllers/userController");
 const { verifyToken } = require("../middlewares/auth");
 const upload = require("../utils/multer");
@@ -16,7 +17,7 @@ const router = express.Router();
 
 //Ruta simple sin autentificacion
 router.post("/register", createUser)
-
+router.post("/contact", contactEmail)
 
 //Con autentidicacion en un futuro añadir middlewares
 router.post("/favourite/:idSong", verifyToken, addToFavourites)
