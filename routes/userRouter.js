@@ -19,7 +19,7 @@ const router = express.Router();
 router.post("/register", createUser)
 router.post("/contact", contactEmail)
 
-//Con autentidicacion en un futuro añadir middlewares
+//Con autentidicacion 
 router.post("/favourite/:idSong", verifyToken, addToFavourites)
 router.delete("/favourite/:idSong", verifyToken, deleteToFavourites)
 router.get("/user", verifyToken, getUser)

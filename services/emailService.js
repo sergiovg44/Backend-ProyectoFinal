@@ -16,7 +16,7 @@ const sendEmail = async ({ name, email, subject, message } ) => {
         const mailOptions = {
             from: 'eljardindecrital@gmail.com',
             to: 'eljardindecrital@gmail.com',  
-            subject: `Nuevo mensaje de contacto: ${subject}`,
+            subject: `Nuevo mensaje de contacto: ${name}`,
             text: `
               Nombre: ${name}
               Correo: ${email}

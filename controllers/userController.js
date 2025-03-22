@@ -5,7 +5,7 @@ const sendEmail = require("../services/emailService");
 
 const createUser = async (req, res) => {
   try {
-    // console.log("Datos recibidos:", req.body);
+
     const { nombre, apellidos, email, password } = req.body;
 
     const newUser = {
@@ -63,8 +63,8 @@ const deleteUser = async (req, res) => {
 
 const addToFavourites = async (req, res) => {
   try {
-    const { idSong } = req.params; // ID de la canción
-    const idUser = req.payload._id; // ID del usuario desde el JWT
+    const { idSong } = req.params; 
+    const idUser = req.payload._id; 
 
     if (!idUser) {
       return res
@@ -159,7 +159,7 @@ const deleteToFavourites = async (req, res) => {
 
 const updateUser = async (req, res) => {
   try {
-    const idUser = req.payload._id; // ID del usuario desde el token (asume middleware JWT)
+    const idUser = req.payload._id; 
     const { nombre, apellidos, password } = req.body;
 
     const updateData = { nombre, apellidos };
@@ -215,7 +215,7 @@ const updateImageProfile = (req, res) => {
 
         const user = await UsersModel.findByIdAndUpdate(
           idUser,
-          { profileImage: result.secure_url } // Guarda la URL pública
+          { profileImage: result.secure_url } 
         );
 
         res
@@ -271,7 +271,7 @@ const contactEmail = async (req, res) => {
   }
 
   try {
-    // Enviar correo
+
     await sendEmail({ name, email, subject, message });
 
     return res

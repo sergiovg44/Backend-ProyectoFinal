@@ -30,7 +30,7 @@ const usersSchema = new Schema(
           },
           message: "El email tiene que contener un @ y un .",
         },
-        //El lowercase quita las mayusculas
+
         lowercase: true,
         trim: true,
         unique: true,
