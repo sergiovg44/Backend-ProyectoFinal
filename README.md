@@ -10,6 +10,7 @@ editar su perfil (incluyendo imagen de usuario) y enviar mensajes mediante un fo
 Funciones principales:
 
 - Listado de canciones y detalle individual.
+- Buscar canciones del listado mediante un buscador
 - Registro e inicio de sesión de usuarios.
 - Gestión de canciones favoritas.
 - Edición del usuario (nombre, apellidos, contraseña e imagen).
